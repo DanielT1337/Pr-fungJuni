@@ -2,182 +2,9 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meine Lernkarten</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7f6;
-            color: #333;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 40px 20px;
-            margin: 0;
-        }
-        h1 {
-            color: #2c3e50;
-        }
-        #upload-container {
-            background: #fff;
-            padding: 20px 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        #flashcard-container {
-            display: none;
-            width: 100%;
-            max-width: 600px;
-            text-align: center;
-        }
-        .stats {
-            font-size: 14px;
-            color: #7f8c8d;
-            margin-bottom: 15px;
-        }
-        .card {
-            background: #fff;
-            border-radius: 15px;
-            padding: 40px 30px;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-            min-height: 200px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            position: relative;
-            margin-bottom: 20px;
-        }
-        .question {
-            font-size: 20px;
-            font-weight: bold;
-            color: #2980b9;
-            margin-bottom: 20px;
-        }
-        .answer {
-            display: none;
-            font-size: 18px;
-            color: #2c3e50;
-            border-top: 1px dashed #bdc3c7;
-            padding-top: 20px;
-            margin-top: 10px;
-        }
-        .button-group {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-        button {
-            padding: 12px 24px;
-            font-size: 16px;
-            font-weight: bold;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: transform 0.1s, opacity 0.2s;
-        }
-        button:hover {
-            opacity: 0.9;
-        }
-        button:active {
-            transform: scale(0.97);
-        }
-        .btn-show { background-color: #3498db; color: white; }
-        .btn-correct { background-color: #2ecc71; color: white; display: none; }
-        .btn-wrong { background-color: #e74c3c; color: white; display: none; }
-        
-        #celebration {
-            display: none;
-            text-align: center;
-            background: #fff;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        #celebration h2 { color: #2ecc71; }
-        
-        input[type="file"] {
-            margin-top: 10px;
-        }
-    </style>
-</head>
-<body>
-
-    <h1>Prüfungsvorbereitung</h1>
-
-    <div id="upload-container">
-        <p>Lade deine CSV-Datei hoch (Format: "Frage";"Antwort")</p>
-        <input type="file" id="csvFileInput" accept=".csv">
-    </div>
-
-    <div id="flashcard-container">
-        <div class="stats" id="stats">Karten übrig: 0</div>
-        <div class="card" id="card">
-            <div class="question" id="question">Frage lädt...</div>
-            <div class="answer" id="answer">Antwort lädt...</div>
-        </div>
-        <div class="button-group">
-            <button class="btn-show" id="btn-show" onclick="showAnswer()">Antwort anzeigen</button>
-            <button class="btn-wrong" id="btn-wrong" onclick="markWrong()">Falsch (Wiederholen)</button>
-            <button class="btn-correct" id="btn-correct" onclick="markCorrect()">Richtig (Könnte ich)</button>
-        </div>
-    </div>
-
-    <div id="celebration">
-        <h2>🎉 Herzlichen Glückwunsch! 🎉</h2>
-        <p>Du hast alle Fragen in diesem Deck richtig beantwortet.</p>
-        <button class="btn-show" onclick="location.reload()">Neues Dokument laden</button>
-    </div>
-
-    <script>
-        let learningQueue = [];
-        let currentCardIndex = -1;
-        let totalCards = 0;
-
-        // Event Listener für den Datei-Upload
-        document.getElementById('csvFileInput').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const text = e.target.result;
-                parseCSV(text);
-            };
-            reader.readAsText(file);
-        });
-
-        // CSV Parser: Verarbeitet "Frage";"Antwort"
-        function parseCSV(text) {
-            const lines = text.split('\n');
-            learningQueue = [];
-            
-            for (let i = 0; i < lines.length; i++) {
-                let line = lines[i].trim();
-                if (!line) continue;
-Das ist eine fantastische Idee! Damit baust du dir dein eigenes, massgeschneidertes Lernsystem auf. 
-
-Ich habe dir eine komplette, eigenständige Web-App in einer einzigen HTML-Datei programmiert. Sie liest deine CSV-Datei ein, mischt die Karten zufällig, hat eine schöne Umdreh-Animation für die Karteikarte und sortiert gewusste Fragen aus, während falsche Fragen wieder in den Stapel gemischt werden.
-
-### So nutzt du die App:
-1. Kopiere den kompletten Code aus der Box unten.
-2. Öffne einen einfachen Texteditor (z. B. den "Editor" oder "Notepad" unter Windows, "TextEdit" beim Mac).
-3. Füge den Code dort ein.
-4. Klicke auf **"Speichern unter..."**, wähle als Dateityp "Alle Dateien" und nenne die Datei **`lernapp.html`** (wichtig ist die Endung `.html`). 
-5. Achte darauf, dass als Codierung **UTF-8** ausgewählt ist, damit die Umlaute (ä, ö, ü) richtig angezeigt werden.
-6. Ein Doppelklick auf die Datei öffnet deine neue App direkt in deinem normalen Internetbrowser!
-
-Hier ist der Code für deine interaktive Lernkarten-App:
-
-```html
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meine Palliative Care & Schock Lern-App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Meine Lern-App</title>
     <style>
         :root {
             --primary-color: #4CAF50;
@@ -188,42 +15,54 @@ Hier ist der Code für deine interaktive Lernkarten-App:
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
+            padding: 15px;
             margin: 0;
             min-height: 100vh;
+            box-sizing: border-box;
         }
 
         h1 {
             color: #2c3e50;
             text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
         }
 
         /* Upload Screen */
         #upload-screen {
             background: var(--card-bg);
-            padding: 40px;
+            padding: 30px 20px;
             border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             text-align: center;
             max-width: 500px;
             width: 100%;
-            margin-top: 50px;
+            margin-top: 20px;
         }
 
         input[type="file"] {
             margin: 20px 0;
-            padding: 10px;
+            padding: 15px 10px;
             border: 2px dashed #bdc3c7;
             border-radius: 8px;
             width: 100%;
             box-sizing: border-box;
             cursor: pointer;
+            font-size: 1rem;
+            background-color: #fafafa;
+        }
+        
+        #error-msg {
+            color: var(--danger-color);
+            font-weight: bold;
+            margin-top: 10px;
+            display: none;
         }
 
         /* Quiz Screen */
@@ -231,32 +70,34 @@ Hier ist der Code für deine interaktive Lernkarten-App:
             display: none;
             width: 100%;
             max-width: 600px;
-            display: flex; /* Hidden by default via JS */
             flex-direction: column;
             align-items: center;
         }
 
         #stats {
-            margin-bottom: 20px;
-            font-size: 1.2rem;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
             font-weight: bold;
             color: #7f8c8d;
         }
 
-        /* Flashcard Animation */
+        /* Flashcard Animation (iOS Optimiert) */
         .card-container {
             width: 100%;
             perspective: 1000px;
-            margin-bottom: 30px;
-            min-height: 300px;
+            margin-bottom: 20px;
+            min-height: 350px;
+            /* Verhindert Markieren von Text auf dem Handy beim antippen */
+            -webkit-user-select: none;
+            user-select: none; 
         }
 
         .card {
             width: 100%;
             height: 100%;
-            min-height: 300px;
+            min-height: 350px;
             position: relative;
-            transition: transform 0.6s;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
             transform-style: preserve-3d;
             cursor: pointer;
         }
@@ -269,6 +110,7 @@ Hier ist der Code für deine interaktive Lernkarten-App:
             position: absolute;
             width: 100%;
             height: 100%;
+            -webkit-backface-visibility: hidden;
             backface-visibility: hidden;
             background: var(--card-bg);
             border-radius: 15px;
@@ -281,6 +123,7 @@ Hier ist der Code für deine interaktive Lernkarten-App:
             text-align: center;
             font-size: 1.2rem;
             line-height: 1.5;
+            overflow-y: auto;
         }
 
         .card-front {
@@ -290,42 +133,42 @@ Hier ist der Code für deine interaktive Lernkarten-App:
         .card-back {
             transform: rotateY(180deg);
             border-top: 6px solid #e67e22;
-            overflow-y: auto;
         }
 
         .card-label {
             position: absolute;
             top: 15px;
             left: 20px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: bold;
-            color: #bdc3c7;
+            color: #95a5a6;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        /* Buttons */
+        /* Buttons für Touch optimiert */
         .controls {
             display: flex;
-            gap: 15px;
+            gap: 10px;
             width: 100%;
             justify-content: center;
         }
 
         button {
-            padding: 15px 30px;
+            padding: 16px 20px;
             font-size: 1.1rem;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
-            transition: transform 0.1s, opacity 0.2s;
             font-weight: bold;
             color: white;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            /* Verhindert den blauen Touch-Rahmen auf iOS */
+            -webkit-tap-highlight-color: transparent; 
         }
 
         button:active {
-            transform: scale(0.95);
+            transform: scale(0.96);
         }
 
         #btn-show {
@@ -350,34 +193,33 @@ Hier ist der Code für deine interaktive Lernkarten-App:
             display: none;
             text-align: center;
             background: var(--card-bg);
-            padding: 50px;
+            padding: 40px 20px;
             border-radius: 12px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             margin-top: 50px;
+            width: 100%;
+            max-width: 500px;
         }
     </style>
 </head>
 <body>
 
-    <!-- Startbildschirm: Datei Upload -->
     <div id="upload-screen">
         <h1>Lernkarten Import</h1>
-        <p>Lade hier deine erstellte CSV-Datei hoch. <br><small>(Format: "Frage";"Antwort")</small></p>
-        <input type="file" id="csvFileInput" accept=".csv">
+        <p>Lade hier deine erstellte Datei hoch.</p>
+        <input type="file" id="csvFileInput" accept=".csv, .tsv, .txt">
+        <div id="error-msg"></div>
     </div>
 
-    <!-- Lernbildschirm: Karteikarten -->
-    <div id="quiz-screen" style="display: none;">
+    <div id="quiz-screen">
         <div id="stats">Karten im Stapel: <span id="cards-left">0</span></div>
         
         <div class="card-container" onclick="flipCard()">
             <div class="card" id="flashcard">
-                <!-- Vorderseite (Frage) -->
                 <div class="card-face card-front">
                     <div class="card-label">Frage</div>
                     <div id="question-text">Lädt...</div>
                 </div>
-                <!-- Rückseite (Antwort) -->
                 <div class="card-face card-back">
                     <div class="card-label">Antwort</div>
                     <div id="answer-text">Lädt...</div>
@@ -387,136 +229,12 @@ Hier ist der Code für deine interaktive Lernkarten-App:
 
         <div class="controls">
             <button id="btn-show" onclick="flipCard()">Antwort anzeigen</button>
-            <button id="btn-incorrect" onclick="markIncorrect()">Falsch (Zurück in Stapel)</button>
-            <button id="btn-correct" onclick="markCorrect()">Richtig (Aus dem Stapel)</button>
+            <button id="btn-incorrect" onclick="markIncorrect()">Falsch <br><small>(Zurück in Stapel)</small></button>
+            <button id="btn-correct" onclick="markCorrect()">Richtig <br><small>(Abhaken)</small></button>
         </div>
     </div>
 
-    <!-- Erfolgsbildschirm -->
     <div id="success-screen">
         <h1>Glückwunsch! 🎉</h1>
         <p>Du hast alle Karten in diesem Durchgang richtig beantwortet!</p>
-        <button style="background-color: #3498db; margin-top: 20px;" onclick="location.reload()">Neuen Durchgang starten</button>
-    </div>
-
-    <script>
-        let cards = [];
-        let currentIndex = -1;
-
-        // Event Listener für den Datei-Upload
-        document.getElementById('csvFileInput').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const content = e.target.result;
-                parseCSV(content);
-            };
-            // Als UTF-8 einlesen, damit Umlaute korrekt bleiben
-            reader.readAsText(file, 'UTF-8');
-        });
-
-        // CSV Parser
-        function parseCSV(text) {
-            cards = [];
-            const lines = text.split('\n');
-            
-            for (let i = 0; i < lines.length; i++) {
-                let line = lines[i].trim();
-                
-                // Überspringe leere Zeilen und die Kopfzeile
-                if (!line || line.toLowerCase().includes('"frage";"antwort"')) continue;
-
-                // Trennen an ";"
-                let parts = line.split('";"');
-                if (parts.length >= 2) {
-                    // Entferne führende und abschliessende Anführungszeichen
-                    let question = parts[0].replace(/^"/, '').replace(/"$/, '').trim();
-                    let answer = parts[1].replace(/^"/, '').replace(/"$/, '').trim();
-                    
-                    if(question && answer) {
-                        cards.push({ q: question, a: answer });
-                    }
-                }
-            }
-
-            if (cards.length > 0) {
-                // UI umschalten
-                document.getElementById('upload-screen').style.display = 'none';
-                document.getElementById('quiz-screen').style.display = 'flex';
-                
-                shuffleArray(cards);
-                nextCard();
-            } else {
-                alert('Es konnten keine gültigen Karten gefunden werden. Bitte überprüfe die CSV-Datei.');
-            }
-        }
-
-        // Zeigt die nächste zufällige Karte an
-        function nextCard() {
-            if (cards.length === 0) {
-                // Alle gewusst!
-                document.getElementById('quiz-screen').style.display = 'none';
-                document.getElementById('success-screen').style.display = 'block';
-                return;
-            }
-
-            // Zufällige Karte aus dem restlichen Stapel auswählen
-            currentIndex = Math.floor(Math.random() * cards.length);
-            const card = cards[currentIndex];
-
-            // Texte setzen
-            document.getElementById('question-text').innerText = card.q;
-            document.getElementById('answer-text').innerText = card.a;
-            
-            // UI aktualisieren (Karte auf Vorderseite drehen, Buttons anpassen)
-            document.getElementById('flashcard').classList.remove('is-flipped');
-            document.getElementById('btn-show').style.display = 'block';
-            document.getElementById('btn-correct').style.display = 'none';
-            document.getElementById('btn-incorrect').style.display = 'none';
-            
-            updateStats();
-        }
-
-        // Karte umdrehen
-        function flipCard() {
-            const cardElement = document.getElementById('flashcard');
-            // Verhindern, dass erneut umgedreht wird, wenn schon die Antwort sichtbar ist
-            if (cardElement.classList.contains('is-flipped')) return;
-
-            cardElement.classList.add('is-flipped');
-            
-            // Buttons umschalten
-            document.getElementById('btn-show').style.display = 'none';
-            document.getElementById('btn-correct').style.display = 'block';
-            document.getElementById('btn-incorrect').style.display = 'block';
-        }
-
-        // Antwort war richtig -> Karte aus dem Stapel löschen
-        function markCorrect() {
-            cards.splice(currentIndex, 1);
-            nextCard();
-        }
-
-        // Antwort war falsch -> Karte bleibt im Stapel
-        function markIncorrect() {
-            // Einfach nächste Karte ziehen, die aktuelle bleibt im Array (cards)
-            nextCard();
-        }
-
-        // Statistik Anzeige aktualisieren
-        function updateStats() {
-            document.getElementById('cards-left').innerText = cards.length;
-        }
-
-        // Hilfsfunktion zum Mischen beim Start
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-        }
-    </script>
-</body>
-</html>
+        <button style="background-color: #3498db; margin-top: 20px; width: 100%;"
