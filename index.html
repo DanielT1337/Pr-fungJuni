@@ -87,7 +87,6 @@
             perspective: 1000px;
             margin-bottom: 20px;
             min-height: 350px;
-            /* Verhindert Markieren von Text auf dem Handy beim antippen */
             -webkit-user-select: none;
             user-select: none; 
         }
@@ -146,7 +145,7 @@
             letter-spacing: 1px;
         }
 
-        /* Buttons für Touch optimiert */
+        /* Buttons */
         .controls {
             display: flex;
             gap: 10px;
@@ -163,12 +162,18 @@
             font-weight: bold;
             color: white;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            /* Verhindert den blauen Touch-Rahmen auf iOS */
             -webkit-tap-highlight-color: transparent; 
         }
 
         button:active {
             transform: scale(0.96);
+        }
+
+        #btn-start {
+            background-color: var(--primary-color);
+            width: 100%;
+            font-size: 1.2rem;
+            margin-top: 10px;
         }
 
         #btn-show {
@@ -206,8 +211,9 @@
 
     <div id="upload-screen">
         <h1>Lernkarten Import</h1>
-        <p>Lade hier deine erstellte Datei hoch.</p>
+        <p>1. Wähle deine CSV-Datei aus.<br>2. Klicke auf "Karten laden & Starten".</p>
         <input type="file" id="csvFileInput" accept=".csv, .tsv, .txt">
+        <button id="btn-start" onclick="startLoading()">Karten laden & Starten</button>
         <div id="error-msg"></div>
     </div>
 
@@ -237,4 +243,148 @@
     <div id="success-screen">
         <h1>Glückwunsch! 🎉</h1>
         <p>Du hast alle Karten in diesem Durchgang richtig beantwortet!</p>
-        <button style="background-color: #3498db; margin-top: 20px; width: 100%;"
+        <button style="background-color: #3498db; margin-top: 20px; width: 100%;" onclick="location.reload()">Neues Deck laden</button>
+    </div>
+
+    <script>
+        let cards = [];
+        let currentIndex = -1;
+
+        const uploadScreen = document.getElementById('upload-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const successScreen = document.getElementById('success-screen');
+        const errorMsg = document.getElementById('error-msg');
+
+        // Funktion, die durch den neuen Start-Knopf ausgelöst wird
+        function startLoading() {
+            errorMsg.style.display = 'none';
+            const fileInput = document.getElementById('csvFileInput');
+            
+            if (fileInput.files.length === 0) {
+                errorMsg.innerText = "Bitte wähle zuerst eine Datei aus!";
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const content = e.target.result;
+                parseData(content);
+            };
+            
+            // UTF-8 stellt sicher, dass Umlaute korrekt gelesen werden
+            reader.readAsText(file, 'UTF-8');
+        }
+
+        // Robuster Parser
+        function parseData(text) {
+            cards = [];
+            
+            // 1. Ersetze typografische Apple-Anführungszeichen durch normale
+            text = text.replace(/[“”„]/g, '"');
+            
+            // 2. Teile in Zeilen auf (erkennt Windows \r\n, Mac \r und Linux \n)
+            const lines = text.split(/\r?\n/);
+            
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i].trim();
+                
+                // Überspringe leere Zeilen und die Kopfzeile (Frage;Antwort)
+                if (!line || (line.toLowerCase().includes('frage') && line.toLowerCase().includes('antwort'))) {
+                    continue;
+                }
+
+                // 3. Finde das richtige Trennzeichen (Semikolon, Tabulator oder Komma)
+                let parts = line.split(';');
+                if (parts.length < 2) parts = line.split('\t'); 
+                if (parts.length < 2) parts = line.split('","'); 
+
+                if (parts.length >= 2) {
+                    // Entferne umgebende Anführungszeichen und Leerzeichen von der Frage
+                    let question = parts[0].replace(/^["']|["']$/g, '').trim();
+                    
+                    // Die Antwort ist der ganze Rest
+                    let answerParts = parts.slice(1).join(';');
+                    let answer = answerParts.replace(/^["']|["']$/g, '').trim();
+                    
+                    if(question && answer) {
+                        cards.push({ q: question, a: answer });
+                    }
+                }
+            }
+
+            if (cards.length > 0) {
+                // UI umschalten
+                uploadScreen.style.display = 'none';
+                quizScreen.style.display = 'flex';
+                
+                shuffleArray(cards);
+                nextCard();
+            } else {
+                errorMsg.innerText = 'Fehler: Es wurden keine lesbaren Karten gefunden. Bitte prüfe das Format ("Frage";"Antwort").';
+                errorMsg.style.display = 'block';
+            }
+        }
+
+        // Zeigt die nächste zufällige Karte an
+        function nextCard() {
+            if (cards.length === 0) {
+                quizScreen.style.display = 'none';
+                successScreen.style.display = 'block';
+                return;
+            }
+
+            currentIndex = Math.floor(Math.random() * cards.length);
+            const card = cards[currentIndex];
+
+            document.getElementById('question-text').innerText = card.q;
+            document.getElementById('answer-text').innerText = card.a;
+            
+            document.getElementById('flashcard').classList.remove('is-flipped');
+            document.getElementById('btn-show').style.display = 'block';
+            document.getElementById('btn-correct').style.display = 'none';
+            document.getElementById('btn-incorrect').style.display = 'none';
+            
+            updateStats();
+        }
+
+        // Karte umdrehen
+        function flipCard() {
+            const cardElement = document.getElementById('flashcard');
+            if (cardElement.classList.contains('is-flipped')) return;
+
+            cardElement.classList.add('is-flipped');
+            
+            document.getElementById('btn-show').style.display = 'none';
+            document.getElementById('btn-correct').style.display = 'block';
+            document.getElementById('btn-incorrect').style.display = 'block';
+        }
+
+        // Antwort war richtig -> Karte aus dem Stapel löschen
+        function markCorrect() {
+            cards.splice(currentIndex, 1);
+            nextCard();
+        }
+
+        // Antwort war falsch -> Karte bleibt im Stapel
+        function markIncorrect() {
+            nextCard();
+        }
+
+        // Statistik Anzeige aktualisieren
+        function updateStats() {
+            document.getElementById('cards-left').innerText = cards.length;
+        }
+
+        // Mischen beim Start
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+    </script>
+</body>
+</html>
